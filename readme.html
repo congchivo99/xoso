@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<a id="readme-top"></a>
+<h1 align="center">Ứng dụng xổ số Con Gà Trống</h1>
+<p>Ứng dụng viết trên Visual Studio 2015 và MS SQL Server 2008.</p>
+<!-- TABLE OF CONTENTS -->
+<details>
+	<summary>Table of Contents</summary>
+	<ol>
+		<li><a href="#mo-ta-code">Mô tả code</a></li>
+		<li><a href="#mo-ta-db">Mô tả database</a></li>
+	</ol>
+</details>
+
+
+<hr />
+<!-- MÔ TẢ CODE -->
+## Mô tả code
+<p id="mo-ta-code">Mô tả code:</p>
+<p>Để ứng dụng hoạt động được bên máy của anh/chị. Anh.chị thay thế nội dung của chuỗi <code>connectionStrings</code> có <code>name="xosoConn"</code> trong File <code>App.config</code> tương ứng với SQL Server của bên anh/chị:</p>
+<p>(Anh/chị vui lòng tìm file backup xoso.bak của databse và restore vào SQL Server của bên anh/chị.)</p>
+<p><code>Data Source=CHUOT-PC\SQLEXPRESS;Initial Catalog=xoso;Integrated Security=True</code></p>
+<ul>
+<li><code>Source=&lt;SQL Server name&gt;;</code></li>
+<li><code>Catalog=&lt;Tên database&gt;;</code></li>
+<li>Trên máy của mình dùng Windows Authentication. Nếu anh/chị dùng SQL Server Authentication, xin thêm đoạn <code>;User ID=&lt;tên user&gt;;Password=&lt;password&gt;</code>
+	<ul>
+	<li><code>User ID=&lt;tên user&gt;</code>. Ví dụ: <code>User ID=sa</code></li>
+	<li><code>Password=&lt;password&gt;</code>. Mật khẩu của user ID.</li>
+</ul></li>
+</ul>
+<p>Ứng dụng có 3 Form:</p>
+<ol>
+<li>MainForm: Form mặc định của ứng dụng.</li>
+<li>AdminForm: Form dành cho Admin.</li>
+<li>ClientForm: Form dành cho người chơi.</li></ol>
+
+---
+<h3 id="clientform">ClientForm:</h3>
+<p>Menu có 3 item: Đăng nhập, Đăng ký và Đăng xuất</p>
+<ol>
+<li>Đăng ký: đăng ký 1 người chơi theo sdt, họ tên, ngày sinh</li>
+<li>Đăng nhập: sau khi đã đăng ký, thì dùng sdt đó để đăng nhập.</li>
+<li>Đăng xuất: xóa phiên đăng nhập.</li></ol>
+<p>Khi mới mở form, user phải chọn 1 trong 3 item trên thanh menu.</p>
+<p>Control <code>Đăng nhập</code> và <code>đặt cược</code> có thể dùng <code>phím enter</code> để thay button click.</p>
+<p>Khi người chơi đăng nhập, form hiển thị <code>control đặt cược</code> và 1 bảng các con số đã đặt.</p>
+<p>Khi 1 người chơi đăng nhập: ghi nhận sdt đó vào table <code>t_userlog</code>. Khi đăng xuất hoặc đóng form, tài khoản sẽ được gỡ khỏi t_userlog.</p>
+<h4 id="chuc-nang-dat-cuoc">Chức năng đặt cược:</h4>
+<p>Sau khi đăng nhập. Màn hình có 2 khung. Bên trái là control đặt cược, control bên phải là tất cả những slot đã đặt của sdt đó. Các cột trong control bên phải tương ứng với:</p>
+	<ul>
+<li>ngày đặt;</li>
+<li>giờ đặt;</li>
+<li>con số do người chơi chọn;</li>
+<li>trúng thưởng có 2 giá trị: 1 = trúng thưởng, 0 là không trúng</li></ul>
+---
+<h3 id="adminform">Admin Form</h3>
+<p>Timer mỗi phút sẽ refresh data mỗi 60 giây 1 lần gồm:</p>
+<ol>
+<li>Danh sách tài khoản.</li>
+<li>Danh sách các slot đã dc đặt.</li>
+<li>Danh sách các user đang online.</li>
+<li>Tại phút thứ 00, tạo 1 số ngẫu nhiên từ 0 đến 9 và gọi store <code>luu_ketqua</code> để lưu số đó vào database.</li>
+</ol>
+<hr />
+<!-- MÔ TẢ DATABASE -->
+## Mô tả database </li>
+</ul>
+<p id="mo-ta-db">Mô tả database</p>
+<p>Database name: <code>xoso</code>.</p>
+<p>Database <code>xoso</code> có các Table và Store Procedure sau:</p>
+<p>Table:</p>
+<ol>
+<li><code>t_datcuoc(sdt, chonso, ngay, gio)</code>: Lưu slot đặt cược của người chơi. <code>sdt</code> là số điện thoại của người chơi tương ứng với sdt đang có trong bảng <code>t_nguoichoi</code>, chonso là số mà người chơi chọn, cột ngay và gio là thời gian lúc người chơi nhấn nút.</li>
+<li><code>t_ketqua(soxo, ngay, gio)</code>: Bảng lưu kết quả sổ xố.</li>
+<li><code>t_nguoichoi(sdt, hoten, ngaysinh)</code>: Bảng chứa thông tin người chơi đã đăng ký.</li>
+<li><code>t_userlog</code>: thông tin các người chơi đã đăng nhập</li>
+</ol>
+<p>Store Procedure:</p>
+<ol>
+<li><code>dang_nhap</code>: kiểm tra sdt trong bảng t_nguoichoi, nếu có trả về 1, đồng thời gọi store <code>luu_userlog</code>, không có trả về 0.</li>
+<li><code>luu_datcuoc</code>: lưu lần đặt cược. Khi người chơi nhấn nút trên clientform, giá trị truyền vào là sdt và số_cược. Nếu ngày và giờ đó người dùng chưa đặt thì store procedure này sẽ lưu vào bảng t_datcuoc; nếu đã người chơi đặt rồi thì không lưu.</li>
+<li><code>luu_ketqua</code>: dùng tạo và lưu kết quả xổ số mỗi giờ. Nếu ngày giờ đó chưa có trong bảng <code>t_ketqua</code> thì store này sẽ lưu vào. Ngày giờ dc tính là ngày giờ hiện tại trừ đi 1 giờ. Cùng với 1 con số nguyên được rand bên trong store.</li>
+<li><code>luu_nguoichoi</code>: lưu thông tin người chơi mới. Nếu sdt chưa có trong bảng <code>t_nguoichoi</code>, store của lưu vào bảng.</li>
+<li><code>luu_userlog</code>: thêm 1 user vào bảng t_userlog.</li>
+<li><code>tim_admin_danhsach_ketqua_datcuoc</code>: danh sách kết hợp các kết quả xổ số và đặt cược.</li>
+<li><code>tim_admin_danhsachnguoichoi</code>: lấy về tất cả người chơi đã đăng ký trong bảng <code>t_nguoichoi</code>, dùng trên adminform.</li>
+<li><code>tim_danhsachdatcuoc</code>: trả về bảng dữ liệu là các slot đã đặt của người chơi tương ứng với số điện thoại đang đăng nhập trên form. Bảng này sẽ hiển thị trên <a href="chuc-nang-dat-cuoc">control bên phải của form client</a>. Bảng có các cột: ngày, giờ, số_đã_chọn, và trúng_thưởng. Thông tin được lấy từ bảng <code>t_datcuoc</code> left join <code>t_ketqua</code> on <code>ngay, gio</code>.</li>
+<li><code>tim_danhsachuserlog</code>: lấy tất cả dữ liệu trong bảng t_userlog</li>
+<li><code>tim_nguoichoi</code>: lấy thông tin của người chơi theo sdt.</li>
+<li><code>xoa_userlog</code>: gỡ 1 user khỏi bảng t_userlog.</li>
+</ol>
+<hr />
+<!-- CONTACT -->
+## Contact
+<p align="center">Vo Chi Cong</p>
+<hr />
+<p align="center" style="padding:48px 0">(<a href="#readme-top">back to top</a>)</p>
+
+</body>
+</html>
